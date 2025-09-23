@@ -34,82 +34,168 @@ export default function DashboardLayout({ children, user, onLogout, currentView,
   ];
 
   return (
-    <div className="min-h-screen w-full bg-gray-100 flex font-sans">
+    <div className="min-h-screen w-full bg-white flex font-sans">
       {/* Overlay para cerrar el menú en móvil */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black/50 z-20 md:hidden"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-20 md:hidden animate-in fade-in"
           onClick={() => setIsSidebarOpen(false)}
         ></div>
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-30 w-64 bg-gray-800 text-gray-200 flex flex-col shadow-lg 
+      <aside className={`fixed inset-y-0 left-0 z-30 w-72 bg-slate-800 text-gray-100 flex flex-col shadow-xl border-r border-slate-700
                          transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
                          md:relative md:translate-x-0 transition-transform duration-300 ease-in-out`}>
         
-        <div className="flex items-center justify-between p-6 border-b border-gray-700">
+        {/* Header del Sidebar */}
+        <div className="flex items-center justify-between p-6 border-b border-slate-600 bg-slate-900/50">
           <div className="flex items-center gap-3">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-orange-500"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/><path d="M12 8V15" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/><path d="M9 11.5H15" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            <span className="text-xl font-bold text-white">EstrellaFarma</span>
+            <div className="relative">
+              <div className="absolute inset-0 bg-orange-500/20 rounded-lg blur-md"></div>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="relative text-orange-500">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
+                <path d="M12 8V15" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M9 11.5H15" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+            <div>
+              <span className="text-xl font-bold text-white">EstrellaFarma</span>
+              <p className="text-xs text-orange-300 font-medium">Sistema Farmacéutico</p>
+            </div>
           </div>
-          <button onClick={() => setIsSidebarOpen(false)} className="md:hidden text-gray-400 hover:text-white">
+          <button 
+            onClick={() => setIsSidebarOpen(false)} 
+            className="md:hidden text-gray-400 hover:text-white p-1 rounded-lg hover:bg-gray-700/50 transition-all duration-200"
+          >
             <CloseIcon />
           </button>
         </div>
 
-        <nav className="flex-grow p-4">
-          <ul className="space-y-2">
-            {navItems.map(item => {
-              if (item.adminOnly && !isAdmin) return null;
-              const isActive = currentView === item.view;
-              return (
-                <li key={item.name}>
-                  <button
-                    onClick={() => { setCurrentView(item.view); setIsSidebarOpen(false); }}
-                    className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-lg transition-colors duration-200 ${
-                      isActive
-                        ? 'bg-orange-500 text-white font-semibold shadow-md'
-                        : 'text-gray-300 hover:bg-gray-700 hover:text-white'
-                    }`}
-                  >
-                    {item.icon}
-                    <span>{item.name}</span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+        {/* Navegación */}
+        <nav className="flex-grow p-4 overflow-y-auto custom-scrollbar">
+          <div className="mb-4">
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-3">
+              Menú Principal
+            </p>
+            <ul className="space-y-2">
+              {navItems.map(item => {
+                if (item.adminOnly && !isAdmin) return null;
+                const isActive = currentView === item.view;
+                return (
+                  <li key={item.name}>
+                    <button
+                      onClick={() => { setCurrentView(item.view); setIsSidebarOpen(false); }}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                        isActive
+                          ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white font-semibold shadow-lg shadow-orange-500/25 transform scale-105'
+                          : 'text-slate-300 hover:bg-slate-700/70 hover:text-white hover:translate-x-1'
+                      }`}
+                    >
+                      <div className={`transition-transform duration-200 ${isActive ? '' : 'group-hover:scale-110'}`}>
+                        {item.icon}
+                      </div>
+                      <span className="font-medium">{item.name}</span>
+                      {isActive && (
+                        <div className="ml-auto w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                      )}
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         </nav>
 
-        <div className="border-t border-gray-700 p-4">
-          <div className="p-3 bg-gray-700/50 rounded-lg">
-            <p className="text-sm font-medium text-white truncate">{user.email}</p>
-            <p className="text-xs text-orange-400 font-semibold">{user.role}</p>
+        {/* Footer del Sidebar - Info del Usuario */}
+        <div className="border-t border-slate-600 p-4 bg-slate-900/30">
+          <div className="bg-gradient-to-r from-slate-700/50 to-slate-600/50 backdrop-blur-sm p-4 rounded-xl border border-slate-500/30 mb-4">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                {user.email.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-white truncate">{user.email}</p>
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <p className="text-xs text-orange-400 font-semibold">{user.role}</p>
+                </div>
+              </div>
+            </div>
           </div>
+          
           <button 
             onClick={onLogout}
-            className="w-full mt-4 flex items-center justify-center gap-2 text-gray-300 hover:text-white bg-red-600/70 hover:bg-red-600 px-4 py-2 rounded-lg font-semibold transition-all duration-200"
+            className="w-full flex items-center justify-center gap-2 text-white bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 px-4 py-3 rounded-xl font-semibold transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 group"
           >
-            <LogoutIcon />
-            Cerrar Sesión
+            <div className="group-hover:rotate-12 transition-transform duration-200">
+              <LogoutIcon />
+            </div>
+            <span>Cerrar Sesión</span>
           </button>
         </div>
       </aside>
 
-      {/* Contenido Principal con cabecera para móvil */}
-      <div className="flex-1 flex flex-col">
-        <header className="md:hidden flex justify-between items-center bg-white p-4 shadow-md sticky top-0 z-10">
-          <button onClick={() => setIsSidebarOpen(true)} className="text-gray-700 p-2">
+      {/* Contenido Principal */}
+      <div className="flex-1 flex flex-col min-w-0">
+        {/* Header móvil mejorado */}
+        <header className="md:hidden flex justify-between items-center bg-white/80 backdrop-blur-lg p-4 shadow-lg sticky top-0 z-10 border-b border-gray-200">
+          <button 
+            onClick={() => setIsSidebarOpen(true)} 
+            className="text-gray-700 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+          >
             <MenuIcon />
           </button>
-          <span className="text-lg font-bold text-gray-800">EstrellaFarma</span>
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg flex items-center justify-center">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="text-white">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="currentColor"/>
+              </svg>
+            </div>
+            <span className="text-lg font-bold text-gray-800">EstrellaFarma</span>
+          </div>
+          <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+            {user.email.charAt(0).toUpperCase()}
+          </div>
         </header>
-        <main className="flex-grow p-4 md:p-8 bg-gray-100 overflow-y-auto">
-          {children}
+
+        {/* Contenido principal con mejoras */}
+        <main className="flex-grow p-6 bg-white overflow-y-auto custom-scrollbar">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
+
+      <style jsx>{`
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: rgba(55, 65, 81, 0.1);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: rgba(156, 163, 175, 0.5);
+          border-radius: 3px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: rgba(156, 163, 175, 0.8);
+        }
+        
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        
+        .animate-in.fade-in {
+          animation: fade-in 0.2s ease-out;
+        }
+      `}</style>
     </div>
   );
 }
-
