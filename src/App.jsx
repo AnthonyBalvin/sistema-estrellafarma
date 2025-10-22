@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from './supabase/client';
 import LoginPage from './pages/LoginPage';
 import DashboardLayout from './layouts/DashboardLayout';
+
 // Importamos TODAS las páginas del dashboard
 import DashboardPage from './pages/dashboard/MainDashboardPage';
 import InventoryPage from './pages/dashboard/InventoryPage';
@@ -12,15 +13,15 @@ import UsersPage from './pages/dashboard/UsersPage';
 import SettingsPage from './pages/dashboard/SettingsPage';
 import ClientsPage from './pages/dashboard/ClientsPage';
 import SuppliersPage from './pages/dashboard/SuppliersPage';
-import ExpirationsPage from './pages/dashboard/ExpirationsPage';
-import CreditAccountsPage from './pages/dashboard/CreditAccountsPage';
+import BranchesPage from './pages/dashboard/BranchesPage';
+import CreditAccountsPage from './pages/dashboard/CreditAccountsPage'; // Aseguramos que se importa
+import CashClosurePage from './pages/dashboard/CashClosurePage'; 
 
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [currentView, setCurrentView] = useState('');
 
-  // Guardar currentView en localStorage cuando cambie
   useEffect(() => {
     if (currentView) {
       localStorage.setItem('currentView', currentView);
@@ -31,38 +32,23 @@ function App() {
     const checkSession = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        const { data: profile } = await supabase
-          .from('profiles')
-          .select('role')
-          .eq('id', session.user.id)
-          .single();
-
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
         const userRole = profile?.role;
         setUser({ ...session.user, role: userRole });
-
-        // Obtener vista previa desde localStorage o establecer por defecto
         const storedView = localStorage.getItem('currentView');
         const defaultView = userRole === 'Administrador' ? 'dashboard' : 'sales';
         setCurrentView(storedView || defaultView);
       }
       setLoading(false);
     };
-
     checkSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) {
         const fetchProfile = async () => {
-          const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', session.user.id)
-            .single();
-
+          const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single();
           const userRole = profile?.role;
           setUser({ ...session.user, role: userRole });
-
-          // Obtener vista previa desde localStorage o establecer por defecto
           const storedView = localStorage.getItem('currentView');
           const defaultView = userRole === 'Administrador' ? 'dashboard' : 'sales';
           setCurrentView(storedView || defaultView);
@@ -73,43 +59,36 @@ function App() {
         setCurrentView('');
       }
     });
-
     return () => subscription.unsubscribe();
   }, []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    localStorage.removeItem('currentView'); // Limpiar localStorage
+    localStorage.removeItem('currentView');
     setUser(null);
     setCurrentView('');
   };
 
   const renderDashboardContent = () => {
-    switch (currentView) {
-      case 'dashboard':
-        return <DashboardPage />;
-      case 'inventory':
-        return <InventoryPage />;
-      case 'sales':
-        return <SalesPage />;
-      case 'credit':
-        return <CreditAccountsPage />;
-      case 'clients':
-        return <ClientsPage />;
-      case 'suppliers':
-        return <SuppliersPage />;
-      case 'expirations':
-        return <ExpirationsPage />;
-      case 'reports':
-        return <ReportsPage />;
-      case 'users':
-        return <UsersPage />;
-      case 'settings':
-        return <SettingsPage />;
-      default:
-        return user?.role === 'Administrador' ? <DashboardPage /> : <SalesPage />;
-    }
-  };
+  let componentToRender;
+  switch (currentView) {
+    case 'dashboard': componentToRender = <DashboardPage />; break;
+    case 'inventory': componentToRender = <InventoryPage />; break;
+    case 'sales': componentToRender = <SalesPage />; break;
+    case 'branches': componentToRender = <BranchesPage />; break;
+    case 'clients': componentToRender = <ClientsPage />; break;
+    case 'suppliers': componentToRender = <SuppliersPage />; break;
+    case 'credit': componentToRender = <CreditAccountsPage />; break;
+    case 'cash_closure': componentToRender = <CashClosurePage />; break;
+    case 'reports': componentToRender = <ReportsPage />; break;
+    case 'users': componentToRender = <UsersPage />; break;
+    case 'settings': componentToRender = <SettingsPage />; break;
+    default:
+      componentToRender = user?.role === 'Administrador' ? <DashboardPage /> : <SalesPage />;
+  }
+  // 🔥 Clona el componente y le pasa el 'user' como prop
+  return React.cloneElement(componentToRender, { user });
+};
 
   if (loading) {
     return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-white">Cargando...</div>;
