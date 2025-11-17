@@ -16,6 +16,7 @@ const TruckIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" heigh
 const CalendarClockIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 7.5V6a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h3.5"></path><path d="M16 2v4"></path><path d="M8 2v4"></path><path d="M3 10h5"></path><path d="M17.5 17.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z"></path><path d="M17.5 15.25V17.5l1.25 1.25"></path></svg>;
 const BuildingIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path><path d="M6 12H4a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path><path d="M18 9h2a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2h-2"></path><path d="M10 6h4"></path><path d="M10 10h4"></path><path d="M10 14h4"></path><path d="M10 18h4"></path></svg>;
 const LogoutIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>;
+const FileTextIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>;
 
 export default function DashboardLayout({ children, user, onLogout, currentView, setCurrentView }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -24,6 +25,7 @@ export default function DashboardLayout({ children, user, onLogout, currentView,
   const navItems = [
     { name: 'Dashboard', view: 'dashboard', icon: <HomeIcon />, adminOnly: true },
     { name: 'Ventas', view: 'sales', icon: <ShoppingCartIcon />, adminOnly: false },
+    { name: 'Comprobantes', view: 'vouchers', icon: <FileTextIcon />, adminOnly: false },
     { name: 'Inventario', view: 'inventory', icon: <BoxIcon />, adminOnly: false },
     { name: 'Sucursales', view: 'branches', icon: <BuildingIcon />, adminOnly: true },
     { name: 'Clientes', view: 'clients', icon: <BriefcaseIcon />, adminOnly: false },
@@ -45,12 +47,13 @@ export default function DashboardLayout({ children, user, onLogout, currentView,
       )}
 
       {/* Sidebar */}
-      <aside className={`fixed inset-y-0 left-0 z-30 w-72 bg-slate-800 text-gray-100 flex flex-col shadow-xl border-r border-slate-700
+      <aside className={`fixed inset-y-0 left-0 z-30 w-72 bg-slate-800 text-gray-100 shadow-xl border-r border-slate-700
                          transform ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} 
-                         md:relative md:translate-x-0 transition-transform duration-300 ease-in-out`}>
+                         md:relative md:translate-x-0 transition-transform duration-300 ease-in-out`}
+             style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
         
         {/* Header del Sidebar */}
-        <div className="flex items-center justify-between p-6 border-b border-slate-600 bg-slate-900/50">
+        <div className="flex items-center justify-between p-6 border-b border-slate-600 bg-slate-900/50" style={{ flexShrink: 0 }}>
           <div className="flex items-center gap-3">
             <div className="relative">
               <div className="absolute inset-0 bg-orange-500/20 rounded-lg blur-md"></div>
@@ -74,7 +77,7 @@ export default function DashboardLayout({ children, user, onLogout, currentView,
         </div>
 
         {/* Navegación */}
-        <nav className="flex-grow p-4 overflow-y-auto custom-scrollbar">
+        <nav className="p-4 custom-scrollbar" style={{ flexGrow: 1, flexShrink: 1, overflowY: 'auto', minHeight: 0 }}>
           <div className="mb-4">
             <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-3">
               Menú Principal
@@ -109,7 +112,7 @@ export default function DashboardLayout({ children, user, onLogout, currentView,
         </nav>
 
         {/* Footer del Sidebar - Info del Usuario */}
-        <div className="border-t border-slate-600 p-4 bg-slate-900/30">
+        <div className="border-t border-slate-600 p-4 bg-slate-900/30" style={{ flexShrink: 0 }}>
           <div className="bg-gradient-to-r from-slate-700/50 to-slate-600/50 backdrop-blur-sm p-4 rounded-xl border border-slate-500/30 mb-4">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full flex items-center justify-center text-white font-bold text-sm">

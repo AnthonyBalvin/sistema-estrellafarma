@@ -14,8 +14,9 @@ import SettingsPage from './pages/dashboard/SettingsPage';
 import ClientsPage from './pages/dashboard/ClientsPage';
 import SuppliersPage from './pages/dashboard/SuppliersPage';
 import BranchesPage from './pages/dashboard/BranchesPage';
-import CreditAccountsPage from './pages/dashboard/CreditAccountsPage'; // Aseguramos que se importa
-import CashClosurePage from './pages/dashboard/CashClosurePage'; 
+import CreditAccountsPage from './pages/dashboard/CreditAccountsPage';
+import CashClosurePage from './pages/dashboard/CashClosurePage';
+import VouchersPage from './pages/dashboard/VouchersPage'; // 🆕 NUEVA IMPORTACIÓN
 
 function App() {
   const [user, setUser] = useState(null);
@@ -70,25 +71,26 @@ function App() {
   };
 
   const renderDashboardContent = () => {
-  let componentToRender;
-  switch (currentView) {
-    case 'dashboard': componentToRender = <DashboardPage />; break;
-    case 'inventory': componentToRender = <InventoryPage />; break;
-    case 'sales': componentToRender = <SalesPage />; break;
-    case 'branches': componentToRender = <BranchesPage />; break;
-    case 'clients': componentToRender = <ClientsPage />; break;
-    case 'suppliers': componentToRender = <SuppliersPage />; break;
-    case 'credit': componentToRender = <CreditAccountsPage />; break;
-    case 'cash_closure': componentToRender = <CashClosurePage />; break;
-    case 'reports': componentToRender = <ReportsPage />; break;
-    case 'users': componentToRender = <UsersPage />; break;
-    case 'settings': componentToRender = <SettingsPage />; break;
-    default:
-      componentToRender = user?.role === 'Administrador' ? <DashboardPage /> : <SalesPage />;
-  }
-  // 🔥 Clona el componente y le pasa el 'user' como prop
-  return React.cloneElement(componentToRender, { user });
-};
+    let componentToRender;
+    switch (currentView) {
+      case 'dashboard': componentToRender = <DashboardPage />; break;
+      case 'inventory': componentToRender = <InventoryPage />; break;
+      case 'sales': componentToRender = <SalesPage />; break;
+      case 'vouchers': componentToRender = <VouchersPage />; break; // 🆕 NUEVO CASE
+      case 'branches': componentToRender = <BranchesPage />; break;
+      case 'clients': componentToRender = <ClientsPage />; break;
+      case 'suppliers': componentToRender = <SuppliersPage />; break;
+      case 'credit': componentToRender = <CreditAccountsPage />; break;
+      case 'cash_closure': componentToRender = <CashClosurePage />; break;
+      case 'reports': componentToRender = <ReportsPage />; break;
+      case 'users': componentToRender = <UsersPage />; break;
+      case 'settings': componentToRender = <SettingsPage />; break;
+      default:
+        componentToRender = user?.role === 'Administrador' ? <DashboardPage /> : <SalesPage />;
+    }
+    // 🔥 Clona el componente y le pasa el 'user' como prop
+    return React.cloneElement(componentToRender, { user });
+  };
 
   if (loading) {
     return <div className="min-h-screen bg-slate-900 flex items-center justify-center text-white">Cargando...</div>;

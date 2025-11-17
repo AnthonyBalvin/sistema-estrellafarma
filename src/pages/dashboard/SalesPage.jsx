@@ -1,6 +1,7 @@
 // src/pages/dashboard/SalesPage.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import { supabase } from '../../supabase/client';
+import VoucherModal from '../../components/VoucherModal'; // Importar el modal
 
 // --- Iconos ---
 const TrashIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>;
@@ -35,6 +36,10 @@ export default function SalesPage() {
   const [user, setUser] = useState(null);
   const [productSearch, setProductSearch] = useState('');
   const [amountPaid, setAmountPaid] = useState('');
+  
+  // Estados para el comprobante
+  const [isVoucherModalOpen, setIsVoucherModalOpen] = useState(false);
+  const [voucherData, setVoucherData] = useState(null);
 
   const showToast = (message, type = 'success') => {
     setToast({ show: true, message, type });
@@ -123,6 +128,7 @@ export default function SalesPage() {
 
     setLoading(true);
     try {
+      // 1. Crear la venta
       const { data: saleData, error: saleError } = await supabase
         .from('sales')
         .insert({
@@ -136,6 +142,7 @@ export default function SalesPage() {
 
       if (saleError) throw saleError;
 
+      // 2. Insertar los items de la venta
       const saleItems = cart.map(item => ({
         sale_id: saleData.id,
         product_id: item.id,
@@ -146,6 +153,7 @@ export default function SalesPage() {
       const { error: itemsError } = await supabase.from('sale_items').insert(saleItems);
       if (itemsError) throw itemsError;
 
+      // 3. Actualizar stock de productos
       for (const item of cart) {
         const newStock = item.stock_quantity - item.quantity;
         const { error: stockError } = await supabase
@@ -155,16 +163,73 @@ export default function SalesPage() {
         if (stockError) throw stockError;
       }
 
-      showToast('Venta registrada con éxito!');
+      // 4. Generar número de comprobante usando la función
+      const { data: voucherNumberData, error: voucherNumberError } = await supabase
+        .rpc('generate_voucher_number', { voucher_type_param: 'boleta' });
+      
+      if (voucherNumberError) throw voucherNumberError;
+
+      // 5. Crear el comprobante
+      const { data: voucherCreated, error: voucherError } = await supabase
+        .from('vouchers')
+        .insert({
+          sale_id: saleData.id,
+          voucher_number: voucherNumberData,
+          voucher_type: 'boleta',
+          status: 'active',
+        })
+        .select()
+        .single();
+
+      if (voucherError) throw voucherError;
+
+      // 6. Obtener datos del cliente y farmacéutico
+      const clientData = selectedClient 
+        ? clients.find(c => c.id === selectedClient)
+        : null;
+
+      const { data: pharmacistData } = await supabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+
+      // 7. Preparar datos para el modal del comprobante
+      const voucher = {
+        voucherNumber: voucherNumberData,
+        issueDate: new Date().toISOString(),
+        clientName: clientData?.full_name || 'Cliente Anónimo',
+        clientDni: clientData?.dni || '',
+        items: cart.map(item => ({
+          name: item.name,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        totalAmount: totalAmount,
+        pharmacistName: pharmacistData?.full_name || 'Sistema',
+        branchName: 'Principal', // Puedes obtenerlo de branches si lo usas
+        branchAddress: 'Av. Principal 123',
+        branchPhone: '(01) 234-5678',
+        paymentStatus: isCredit ? 'credit' : 'paid',
+      };
+
+      // 8. Mostrar modal del comprobante
+      setVoucherData(voucher);
+      setIsVoucherModalOpen(true);
+
+      // 9. Limpiar el carrito y actualizar productos
+      showToast('¡Venta registrada con éxito!');
       setCart([]);
       setSelectedClient('');
       setIsCredit(false);
       setAmountPaid('');
+      
       const { data: productsData } = await supabase.from('products').select('*');
       setProducts(productsData);
 
     } catch (error) {
       showToast(error.message, 'error');
+      console.error('Error al finalizar venta:', error);
     } finally {
       setLoading(false);
     }
@@ -173,6 +238,14 @@ export default function SalesPage() {
   return (
     <>
       {toast.show && <Toast message={toast.message} type={toast.type} onHide={() => setToast({ ...toast, show: false })} />}
+      
+      {/* Modal de Comprobante */}
+      <VoucherModal 
+        isOpen={isVoucherModalOpen}
+        onClose={() => setIsVoucherModalOpen(false)}
+        voucherData={voucherData}
+      />
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Columna Izquierda: Productos */}
         <div className="lg:col-span-2">
@@ -220,7 +293,7 @@ export default function SalesPage() {
           </div>
         </div>
 
-        {/* Columna Derecha: Carrito y Resumen - Manteniendo estructura exacta */}
+        {/* Columna Derecha: Carrito y Resumen */}
         <div className="bg-white rounded-lg shadow-lg border border-gray-100 flex flex-col overflow-hidden">
           {/* Header del carrito con icono */}
           <div className="bg-gradient-to-r from-orange-500 to-orange-600 p-6 text-white">
