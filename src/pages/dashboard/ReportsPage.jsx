@@ -1,168 +1,156 @@
-  // src/pages/dashboard/ReportsPage.jsx
-  import React, { useState, useEffect } from 'react';
-  import { supabase } from '../../supabase/client';
+// src/pages/dashboard/ReportsPage.jsx
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../../supabase/client';
 
-  // Iconos mejorados
-  const ChevronDownIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="6 9 12 15 18 9"></polyline>
-    </svg>
-  );
+// Iconos mejorados
+const ChevronDownIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="6 9 12 15 18 9"></polyline>
+  </svg>
+);
 
-  const ReportIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-      <polyline points="14 2 14 8 20 8"></polyline>
-      <line x1="16" y1="13" x2="8" y2="13"></line>
-      <line x1="16" y1="17" x2="8" y2="17"></line>
-      <polyline points="10 9 9 9 8 9"></polyline>
-    </svg>
-  );
+const ReportIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+    <polyline points="14 2 14 8 20 8"></polyline>
+    <line x1="16" y1="13" x2="8" y2="13"></line>
+    <line x1="16" y1="17" x2="8" y2="17"></line>
+    <polyline points="10 9 9 9 8 9"></polyline>
+  </svg>
+);
 
-  const DownloadIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-      <polyline points="7 10 12 15 17 10"></polyline>
-      <line x1="12" y1="15" x2="12" y2="3"></line>
-    </svg>
-  );
+const DownloadIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+    <polyline points="7 10 12 15 17 10"></polyline>
+    <line x1="12" y1="15" x2="12" y2="3"></line>
+  </svg>
+);
 
-  const FileTextIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-      <polyline points="14 2 14 8 20 8"></polyline>
-      <line x1="16" y1="13" x2="8" y2="13"></line>
-      <line x1="16" y1="17" x2="8" y2="17"></line>
-      <polyline points="10 9 9 9 8 9"></polyline>
-    </svg>
-  );
+const FileTextIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+    <polyline points="14 2 14 8 20 8"></polyline>
+    <line x1="16" y1="13" x2="8" y2="13"></line>
+    <line x1="16" y1="17" x2="8" y2="17"></line>
+    <polyline points="10 9 9 9 8 9"></polyline>
+  </svg>
+);
 
-  const TableIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"></path>
-    </svg>
-  );
+const TableIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2V9M9 21H5a2 2 0 0 1-2-2V9m0 0h18"></path>
+  </svg>
+);
 
-  const CalendarIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-      <line x1="16" y1="2" x2="16" y2="6"></line>
-      <line x1="8" y1="2" x2="8" y2="6"></line>
-      <line x1="3" y1="10" x2="21" y2="10"></line>
-    </svg>
-  );
+const CalendarIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+    <line x1="16" y1="2" x2="16" y2="6"></line>
+    <line x1="8" y1="2" x2="8" y2="6"></line>
+    <line x1="3" y1="10" x2="21" y2="10"></line>
+  </svg>
+);
 
-  const UserIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-      <circle cx="12" cy="7" r="4"></circle>
-    </svg>
-  );
+const UserIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+    <circle cx="12" cy="7" r="4"></circle>
+  </svg>
+);
 
-  const ShoppingBagIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <path d="M16 10a4 4 0 0 1-8 0"></path>
-    </svg>
-  );
+const ShoppingBagIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+    <line x1="3" y1="6" x2="21" y2="6"></line>
+    <path d="M16 10a4 4 0 0 1-8 0"></path>
+  </svg>
+);
 
-  const CurrencyIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="12" y1="1" x2="12" y2="23"></line>
-      <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-    </svg>
-  );
+const CurrencyIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="12" y1="1" x2="12" y2="23"></line>
+    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+  </svg>
+);
 
-  const LoadingSpinner = () => (
-    <div className="flex items-center justify-center py-12">
-      <div className="relative">
-        <div className="w-12 h-12 border-4 border-orange-200 rounded-full animate-spin"></div>
-        <div className="absolute top-0 left-0 w-12 h-12 border-4 border-transparent border-t-orange-500 rounded-full animate-spin"></div>
-      </div>
+const LoadingSpinner = () => (
+  <div className="flex items-center justify-center py-12">
+    <div className="relative">
+      <div className="w-12 h-12 border-4 border-orange-200 rounded-full animate-spin"></div>
+      <div className="absolute top-0 left-0 w-12 h-12 border-4 border-transparent border-t-orange-500 rounded-full animate-spin"></div>
     </div>
-  );
+  </div>
+);
 
-  export default function ReportsPage() {
-    const [sales, setSales] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [expandedSale, setExpandedSale] = useState(null);
-    const [downloading, setDownloading] = useState(false);
+export default function ReportsPage() {
+  const [sales, setSales] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [expandedSale, setExpandedSale] = useState(null);
+  const [downloading, setDownloading] = useState(false);
 
-    // Estados para estadísticas
-    const [stats, setStats] = useState({
-      totalSales: 0,
-      totalRevenue: 0,
-      totalProducts: 0,
-      averageTicket: 0
-    });
+  // Estados para estadísticas
+  const [stats, setStats] = useState({
+    totalSales: 0,
+    totalRevenue: 0,
+    totalProducts: 0,
+    averageTicket: 0
+  });
 
-    useEffect(() => {
-      const fetchSalesHistory = async () => {
-        setLoading(true);
-        setError(null);
-        try {
-          const { data, error: invokeError } = await supabase.functions.invoke('get-sales-history');
-          if (invokeError) throw invokeError;
-          if (data.error) throw new Error(data.error);
+  useEffect(() => {
+    const fetchSalesHistory = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const { data, error: invokeError } = await supabase.functions.invoke('get-sales-history');
+        if (invokeError) throw invokeError;
+        if (data.error) throw new Error(data.error);
+        
+        setSales(data);
+        
+        // Calcular estadísticas
+        if (data.length > 0) {
+          const totalRevenue = data.reduce((sum, sale) => sum + Number(sale.total_amount), 0);
+          const totalProducts = data.reduce((sum, sale) => sum + sale.sale_items.length, 0);
+          const averageTicket = totalRevenue / data.length;
           
-          setSales(data);
-          
-          // Calcular estadísticas
-          if (data.length > 0) {
-            const totalRevenue = data.reduce((sum, sale) => sum + Number(sale.total_amount), 0);
-            const totalProducts = data.reduce((sum, sale) => sum + sale.sale_items.length, 0);
-            const averageTicket = totalRevenue / data.length;
-            
-            setStats({
-              totalSales: data.length,
-              totalRevenue,
-              totalProducts,
-              averageTicket
-            });
-          }
-        } catch (error) {
-          setError(error.message);
-        } finally {
-          setLoading(false);
+          setStats({
+            totalSales: data.length,
+            totalRevenue,
+            totalProducts,
+            averageTicket
+          });
         }
-      };
-
-      fetchSalesHistory();
-    }, []);
-
-    const toggleSaleDetails = (saleId) => {
-      setExpandedSale(expandedSale === saleId ? null : saleId);
-    };
-
-    const formatCurrency = (amount) => {
-      return `S/ ${Number(amount).toFixed(2)}`;
-    };
-
-    const formatDate = (dateString) => {
-      const date = new Date(dateString);
-      const today = new Date();
-      const yesterday = new Date(today);
-      yesterday.setDate(yesterday.getDate() - 1);
-      
-      if (date.toDateString() === today.toDateString()) {
-        return `Hoy, ${date.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}`;
-      } else if (date.toDateString() === yesterday.toDateString()) {
-        return `Ayer, ${date.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}`;
-      } else {
-        return date.toLocaleDateString('es-PE', { 
-          day: '2-digit', 
-          month: '2-digit', 
-          year: 'numeric',
-          hour: '2-digit',
-          minute: '2-digit'
-        });
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    const formatDateForExport = (dateString) => {
-      const date = new Date(dateString);
+    fetchSalesHistory();
+  }, []);
+
+  const toggleSaleDetails = (saleId) => {
+    setExpandedSale(expandedSale === saleId ? null : saleId);
+  };
+
+  const formatCurrency = (amount) => {
+    return `S/ ${Number(amount).toFixed(2)}`;
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+      return `Hoy, ${date.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}`;
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return `Ayer, ${date.toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit' })}`;
+    } else {
       return date.toLocaleDateString('es-PE', { 
         day: '2-digit', 
         month: '2-digit', 
@@ -170,524 +158,768 @@
         hour: '2-digit',
         minute: '2-digit'
       });
-    };
+    }
+  };
 
-    // Función para descargar CSV
-    const downloadCSV = () => {
-      setDownloading(true);
-      try {
-        // Crear datos para el CSV
-        const csvData = [];
-        
-        // Agregar encabezados
-        csvData.push([
-          'Fecha',
-          'Cliente',
-          'Producto',
-          'Cantidad',
-          'Precio Unitario',
-          'Subtotal',
-          'Total de Venta'
-        ]);
+  const formatDateForExport = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-PE', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
 
-        // Agregar datos de ventas
-        sales.forEach(sale => {
-          const saleDate = formatDateForExport(sale.created_at);
-          const clientName = sale.clients?.full_name || 'Cliente Anónimo';
-          const totalAmount = Number(sale.total_amount).toFixed(2);
-
-          sale.sale_items.forEach((item, index) => {
-            csvData.push([
-              index === 0 ? saleDate : '', // Solo mostrar fecha en primera fila
-              index === 0 ? clientName : '', // Solo mostrar cliente en primera fila
-              item.products.name,
-              item.quantity,
-              Number(item.unit_price).toFixed(2),
-              (item.unit_price * item.quantity).toFixed(2),
-              index === 0 ? totalAmount : '' // Solo mostrar total en primera fila
-            ]);
-          });
-
-          // Agregar línea vacía entre ventas
-          csvData.push(['', '', '', '', '', '', '']);
-        });
-
-        // Convertir a CSV
-        const csvContent = csvData.map(row => 
-          row.map(field => `"${field}"`).join(',')
-        ).join('\n');
-
-        // Crear y descargar archivo
-        const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', `reporte_ventas_${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } catch (error) {
-        console.error('Error al generar CSV:', error);
-        alert('Error al generar el archivo CSV');
-      } finally {
-        setDownloading(false);
-      }
-    };
-
-    // Función para descargar PDF (usando HTML básico)
-    const downloadPDF = () => {
-      setDownloading(true);
-      try {
-        // Crear contenido HTML para imprimir
-        const printContent = `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta charset="utf-8">
-            <title>Reporte de Ventas</title>
-            <style>
-              body { font-family: Arial, sans-serif; margin: 20px; }
-              .header { text-align: center; margin-bottom: 30px; }
-              .stats { display: flex; justify-content: space-around; margin-bottom: 30px; }
-              .stat { text-align: center; padding: 10px; }
-              table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-              th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-              th { background-color: #f2f2f2; }
-              .sale-details { margin-left: 20px; margin-bottom: 20px; }
-              .total { font-weight: bold; }
-            </style>
-          </head>
-          <body>
-            <div class="header">
-              <h1>Reporte de Ventas</h1>
-              <p>Generado el ${new Date().toLocaleDateString('es-PE')}</p>
-            </div>
+  // Función mejorada para descargar Excel profesional con formato HTML
+  const downloadExcel = () => {
+    setDownloading(true);
+    try {
+      // Crear HTML con estilos para Excel
+      let htmlContent = `
+        <html xmlns:x="urn:schemas-microsoft-com:office:excel">
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body { font-family: Calibri, Arial, sans-serif; }
+            .header { 
+              background-color: #f97316; 
+              color: white; 
+              font-weight: bold; 
+              text-align: center;
+              font-size: 18px;
+              padding: 15px;
+            }
+            .stats-header {
+              background-color: #fed7aa;
+              font-weight: bold;
+              text-align: center;
+              padding: 10px;
+            }
+            .stats-row {
+              background-color: #fff7ed;
+              text-align: center;
+            }
+            .table-header { 
+              background-color: #fb923c; 
+              color: white; 
+              font-weight: bold; 
+              text-align: center;
+              border: 1px solid #ea580c;
+            }
+            .sale-header {
+              background-color: #1e40af;
+              color: white;
+              font-weight: bold;
+              padding: 8px;
+            }
+            .product-header {
+              background-color: #93c5fd;
+              font-weight: bold;
+              text-align: center;
+              border: 1px solid #3b82f6;
+            }
+            .product-row {
+              background-color: #dbeafe;
+              border: 1px solid #93c5fd;
+            }
+            .total-row {
+              background-color: #fef3c7;
+              font-weight: bold;
+              border: 2px solid #f59e0b;
+            }
+            .footer {
+              background-color: #f3f4f6;
+              text-align: center;
+              font-style: italic;
+              padding: 10px;
+            }
+            td, th { 
+              padding: 8px; 
+              border: 1px solid #d1d5db;
+            }
+            .currency { text-align: right; }
+            .number { text-align: center; }
+            .date { text-align: center; }
+          </style>
+        </head>
+        <body>
+          <table border="1" cellspacing="0" cellpadding="5" style="border-collapse: collapse; width: 100%;">
+            <!-- Encabezado Principal -->
+            <tr>
+              <td colspan="7" class="header">
+                📊 REPORTE DE VENTAS DETALLADO
+              </td>
+            </tr>
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 10px; background-color: #fef3c7;">
+                Generado el: ${new Date().toLocaleDateString('es-PE', { 
+                  weekday: 'long', 
+                  year: 'numeric', 
+                  month: 'long', 
+                  day: 'numeric' 
+                })}
+              </td>
+            </tr>
             
-            <div class="stats">
-              <div class="stat">
-                <h3>Total Ventas</h3>
-                <p>${stats.totalSales}</p>
-              </div>
-              <div class="stat">
-                <h3>Ingresos Totales</h3>
-                <p>${formatCurrency(stats.totalRevenue)}</p>
-              </div>
-              <div class="stat">
-                <h3>Productos Vendidos</h3>
-                <p>${stats.totalProducts}</p>
-              </div>
-              <div class="stat">
-                <h3>Ticket Promedio</h3>
-                <p>${formatCurrency(stats.averageTicket)}</p>
-              </div>
-            </div>
+            <!-- Espacio -->
+            <tr><td colspan="7" style="height: 20px; border: none;"></td></tr>
+            
+            <!-- Estadísticas Generales -->
+            <tr>
+              <td colspan="7" class="stats-header">
+                📈 ESTADÍSTICAS GENERALES
+              </td>
+            </tr>
+            <tr class="stats-row">
+              <td style="font-weight: bold;">Total Ventas</td>
+              <td style="font-weight: bold;">Ingresos Totales</td>
+              <td style="font-weight: bold;">Productos Vendidos</td>
+              <td style="font-weight: bold;">Ticket Promedio</td>
+              <td colspan="3"></td>
+            </tr>
+            <tr class="stats-row">
+              <td style="text-align: center; font-size: 16px; font-weight: bold; color: #1e40af;">
+                ${stats.totalSales}
+              </td>
+              <td style="text-align: center; font-size: 16px; font-weight: bold; color: #16a34a;">
+                S/ ${Number(stats.totalRevenue).toFixed(2)}
+              </td>
+              <td style="text-align: center; font-size: 16px; font-weight: bold; color: #7c3aed;">
+                ${stats.totalProducts}
+              </td>
+              <td style="text-align: center; font-size: 16px; font-weight: bold; color: #f97316;">
+                S/ ${Number(stats.averageTicket).toFixed(2)}
+              </td>
+              <td colspan="3"></td>
+            </tr>
+            
+            <!-- Espacio -->
+            <tr><td colspan="7" style="height: 30px; border: none;"></td></tr>
+      `;
 
-            ${sales.map(sale => `
-              <div style="margin-bottom: 30px; border: 1px solid #ddd; padding: 15px;">
-                <h3>Venta - ${formatDateForExport(sale.created_at)}</h3>
-                <p><strong>Cliente:</strong> ${sale.clients?.full_name || 'Cliente Anónimo'}</p>
-                
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Producto</th>
-                      <th>Cantidad</th>
-                      <th>Precio Unit.</th>
-                      <th>Subtotal</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    ${sale.sale_items.map(item => `
-                      <tr>
-                        <td>${item.products.name}</td>
-                        <td>${item.quantity}</td>
-                        <td>S/ ${Number(item.unit_price).toFixed(2)}</td>
-                        <td>S/ ${(item.unit_price * item.quantity).toFixed(2)}</td>
-                      </tr>
-                    `).join('')}
-                  </tbody>
-                </table>
-                
-                <p class="total"><strong>Total: ${formatCurrency(sale.total_amount)}</strong></p>
-              </div>
-            `).join('')}
-          </body>
-          </html>
+      // Agregar cada venta con formato
+      sales.forEach((sale, saleIndex) => {
+        const saleDate = formatDateForExport(sale.created_at);
+        const clientName = sale.clients?.full_name || 'Cliente Anónimo';
+        const totalAmount = Number(sale.total_amount).toFixed(2);
+
+        htmlContent += `
+          <!-- Venta ${saleIndex + 1} -->
+          <tr>
+            <td colspan="7" class="sale-header">
+              🛒 VENTA #${saleIndex + 1} - ${saleDate}
+            </td>
+          </tr>
+          <tr style="background-color: #eff6ff;">
+            <td colspan="2" style="font-weight: bold;">Cliente:</td>
+            <td colspan="5">${clientName}</td>
+          </tr>
+          
+          <!-- Encabezado de productos -->
+          <tr>
+            <td class="product-header">Producto</td>
+            <td class="product-header">Cantidad</td>
+            <td class="product-header">Precio Unitario</td>
+            <td class="product-header">Subtotal</td>
+            <td colspan="3"></td>
+          </tr>
         `;
 
-        // Abrir ventana de impresión
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write(printContent);
-        printWindow.document.close();
-        printWindow.focus();
-        printWindow.print();
-        printWindow.close();
-      } catch (error) {
-        console.error('Error al generar PDF:', error);
-        alert('Error al generar el archivo PDF');
-      } finally {
-        setDownloading(false);
-      }
-    };
+        // Agregar productos de la venta
+        sale.sale_items.forEach((item) => {
+          const subtotal = (item.unit_price * item.quantity).toFixed(2);
+          htmlContent += `
+            <tr class="product-row">
+              <td>${item.products.name}</td>
+              <td class="number">${item.quantity}</td>
+              <td class="currency">S/ ${Number(item.unit_price).toFixed(2)}</td>
+              <td class="currency">S/ ${subtotal}</td>
+              <td colspan="3"></td>
+            </tr>
+          `;
+        });
 
-    // Función para descargar resumen de estadísticas
-    const downloadSummary = () => {
-      setDownloading(true);
-      try {
-        const summaryData = [
-          ['RESUMEN DE VENTAS'],
-          ['Generado el:', new Date().toLocaleDateString('es-PE')],
-          [''],
-          ['ESTADÍSTICAS GENERALES'],
-          ['Total de Ventas:', stats.totalSales],
-          ['Ingresos Totales:', `S/ ${Number(stats.totalRevenue).toFixed(2)}`],
-          ['Productos Vendidos:', stats.totalProducts],
-          ['Ticket Promedio:', `S/ ${Number(stats.averageTicket).toFixed(2)}`],
-          [''],
-          ['DETALLE POR FECHA'],
-          ['Fecha', 'Cliente', 'Productos', 'Total']
-        ];
+        // Total de la venta
+        htmlContent += `
+          <tr class="total-row">
+            <td colspan="3" style="text-align: right; font-size: 14px;">
+              💰 TOTAL DE LA VENTA:
+            </td>
+            <td class="currency" style="font-size: 14px;">
+              S/ ${totalAmount}
+            </td>
+            <td colspan="3"></td>
+          </tr>
+          
+          <!-- Espacio entre ventas -->
+          <tr><td colspan="7" style="height: 15px; border: none; background-color: #f9fafb;"></td></tr>
+        `;
+      });
 
-        sales.forEach(sale => {
-          summaryData.push([
-            formatDateForExport(sale.created_at),
-            sale.clients?.full_name || 'Cliente Anónimo',
-            sale.sale_items.length,
-            `S/ ${Number(sale.total_amount).toFixed(2)}`
+      // Footer
+      htmlContent += `
+            <!-- Resumen Final -->
+            <tr>
+              <td colspan="7" style="background-color: #1e40af; color: white; font-weight: bold; text-align: center; padding: 12px; font-size: 14px;">
+                💎 RESUMEN TOTAL
+              </td>
+            </tr>
+            <tr style="background-color: #fef3c7;">
+              <td colspan="3" style="text-align: right; font-weight: bold; font-size: 14px;">
+                Total General de Ventas:
+              </td>
+              <td class="currency" style="font-weight: bold; font-size: 16px; color: #16a34a;">
+                S/ ${Number(stats.totalRevenue).toFixed(2)}
+              </td>
+              <td colspan="3"></td>
+            </tr>
+            
+            <!-- Footer -->
+            <tr>
+              <td colspan="7" class="footer">
+                ✨ Reporte generado automáticamente por el Sistema de Gestión Farmacéutica ✨<br>
+                © ${new Date().getFullYear()} - Todos los derechos reservados
+              </td>
+            </tr>
+          </table>
+        </body>
+        </html>
+      `;
+
+      // Crear blob y descargar
+      const blob = new Blob(['\ufeff', htmlContent], { 
+        type: 'application/vnd.ms-excel;charset=utf-8;' 
+      });
+      
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `Reporte_Ventas_Detallado_${new Date().toISOString().split('T')[0]}.xls`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+    } catch (error) {
+      console.error('Error al generar Excel:', error);
+      alert('Error al generar el archivo Excel');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  // Función para descargar CSV simple (mantener como opción alternativa)
+  const downloadCSV = () => {
+    setDownloading(true);
+    try {
+      const csvData = [];
+      
+      csvData.push(['Fecha', 'Cliente', 'Producto', 'Cantidad', 'Precio Unitario', 'Subtotal', 'Total de Venta']);
+
+      sales.forEach(sale => {
+        const saleDate = formatDateForExport(sale.created_at);
+        const clientName = sale.clients?.full_name || 'Cliente Anónimo';
+        const totalAmount = Number(sale.total_amount).toFixed(2);
+
+        sale.sale_items.forEach((item, index) => {
+          csvData.push([
+            index === 0 ? saleDate : '',
+            index === 0 ? clientName : '',
+            item.products.name,
+            item.quantity,
+            Number(item.unit_price).toFixed(2),
+            (item.unit_price * item.quantity).toFixed(2),
+            index === 0 ? totalAmount : ''
           ]);
         });
 
-        const csvContent = summaryData.map(row => 
-          row.map(field => `"${field}"`).join(',')
-        ).join('\n');
+        csvData.push(['', '', '', '', '', '', '']);
+      });
 
-        const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        link.setAttribute('download', `resumen_ventas_${new Date().toISOString().split('T')[0]}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-      } catch (error) {
-        console.error('Error al generar resumen:', error);
-        alert('Error al generar el archivo de resumen');
-      } finally {
-        setDownloading(false);
-      }
-    };
+      const csvContent = csvData.map(row => 
+        row.map(field => `"${field}"`).join(',')
+      ).join('\n');
 
-    return (
-      <div className="min-h-screen bg-gray-50 animate-in fade-in-50 duration-500">
-        {/* Header */}
-        <div className="bg-white border-b border-gray-200 mb-8">
-          <div className="px-6 py-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <div className="p-2 bg-orange-100 rounded-lg mr-3">
-                  <ReportIcon className="text-orange-600" />
-                </div>
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900">Reportes de Ventas</h1>
-                  <p className="text-gray-600">Análisis detallado de transacciones y rendimiento de ventas</p>
-                </div>
-              </div>
-              
-              {/* Botones de Descarga */}
-              {!loading && !error && sales.length > 0 && (
-                <div className="flex space-x-3">
-                  <button
-                    onClick={downloadSummary}
-                    disabled={downloading}
-                    className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <FileTextIcon className="mr-2" />
-                    Resumen
-                  </button>
-                  
-                  <button
-                    onClick={downloadCSV}
-                    disabled={downloading}
-                    className="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <TableIcon className="mr-2" />
-                    CSV Detallado
-                  </button>
-                  
-                  <button
-                    onClick={downloadPDF}
-                    disabled={downloading}
-                    className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <DownloadIcon className="mr-2" />
-                    PDF
-                  </button>
-                </div>
-              )}
+      const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `reporte_ventas_simple_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error al generar CSV:', error);
+      alert('Error al generar el archivo CSV');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  // Función para descargar PDF (usando HTML básico)
+  const downloadPDF = () => {
+    setDownloading(true);
+    try {
+      const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Reporte de Ventas</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 20px; }
+            .header { text-align: center; margin-bottom: 30px; }
+            .stats { display: flex; justify-content: space-around; margin-bottom: 30px; }
+            .stat { text-align: center; padding: 10px; }
+            table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+            th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+            th { background-color: #f2f2f2; }
+            .sale-details { margin-left: 20px; margin-bottom: 20px; }
+            .total { font-weight: bold; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>Reporte de Ventas</h1>
+            <p>Generado el ${new Date().toLocaleDateString('es-PE')}</p>
+          </div>
+          
+          <div class="stats">
+            <div class="stat">
+              <h3>Total Ventas</h3>
+              <p>${stats.totalSales}</p>
+            </div>
+            <div class="stat">
+              <h3>Ingresos Totales</h3>
+              <p>${formatCurrency(stats.totalRevenue)}</p>
+            </div>
+            <div class="stat">
+              <h3>Productos Vendidos</h3>
+              <p>${stats.totalProducts}</p>
+            </div>
+            <div class="stat">
+              <h3>Ticket Promedio</h3>
+              <p>${formatCurrency(stats.averageTicket)}</p>
             </div>
           </div>
-        </div>
 
-        <div className="px-6 pb-8">
-          {/* Tarjetas de Estadísticas */}
-          {!loading && !error && (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Total Ventas</p>
-                    <p className="text-3xl font-bold text-gray-900">{stats.totalSales}</p>
-                  </div>
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <ShoppingBagIcon className="text-blue-600" />
-                  </div>
-                </div>
-                <div className="mt-4 flex items-center text-sm text-green-600">
-                  <span className="font-medium">Transacciones registradas</span>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Ingresos Totales</p>
-                    <p className="text-3xl font-bold text-gray-900">{formatCurrency(stats.totalRevenue)}</p>
-                  </div>
-                  <div className="p-3 bg-green-100 rounded-lg">
-                    <CurrencyIcon className="text-green-600" />
-                  </div>
-                </div>
-                <div className="mt-4 flex items-center text-sm text-green-600">
-                  <span className="font-medium">Facturación acumulada</span>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Productos Vendidos</p>
-                    <p className="text-3xl font-bold text-gray-900">{stats.totalProducts}</p>
-                  </div>
-                  <div className="p-3 bg-purple-100 rounded-lg">
-                    <ShoppingBagIcon className="text-purple-600" />
-                  </div>
-                </div>
-                <div className="mt-4 flex items-center text-sm text-green-600">
-                  <span className="font-medium">Unidades totales</span>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-gray-600">Ticket Promedio</p>
-                    <p className="text-3xl font-bold text-gray-900">{formatCurrency(stats.averageTicket)}</p>
-                  </div>
-                  <div className="p-3 bg-orange-100 rounded-lg">
-                    <CurrencyIcon className="text-orange-600" />
-                  </div>
-                </div>
-                <div className="mt-4 flex items-center text-sm text-green-600">
-                  <span className="font-medium">Por transacción</span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Tabla de Transacciones */}
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-              <h2 className="text-xl font-semibold text-gray-900 flex items-center">
-                <CalendarIcon className="mr-2 text-gray-500" />
-                Historial de Transacciones
-              </h2>
-              <p className="text-sm text-gray-600 mt-1">Detalle completo de todas las ventas realizadas</p>
-            </div>
-
-            {loading ? (
-              <LoadingSpinner />
-            ) : error ? (
-              <div className="p-8 text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
-                  <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
-                  </svg>
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Error al cargar los datos</h3>
-                <p className="text-gray-600 mb-4">{error}</p>
-                <button 
-                  onClick={() => window.location.reload()} 
-                  className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
-                >
-                  Intentar nuevamente
-                </button>
-              </div>
-            ) : sales.length === 0 ? (
-              <div className="p-8 text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
-                  <ShoppingBagIcon className="text-gray-400 w-8 h-8" />
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No hay ventas registradas</h3>
-                <p className="text-gray-600">Las transacciones aparecerán aquí una vez que se realicen ventas.</p>
-              </div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full">
-                  <thead>
-                    <tr className="bg-gray-50 border-b border-gray-200">
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
-                        <span className="sr-only">Expandir</span>
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        <div className="flex items-center">
-                          <CalendarIcon className="mr-2" />
-                          Fecha y Hora
-                        </div>
-                      </th>
-                      <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        <div className="flex items-center">
-                          <UserIcon className="mr-2" />
-                          Cliente
-                        </div>
-                      </th>
-                      <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        <div className="flex items-center justify-center">
-                          <ShoppingBagIcon className="mr-2" />
-                          Productos
-                        </div>
-                      </th>
-                      <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        <div className="flex items-center justify-end">
-                          <CurrencyIcon className="mr-2" />
-                          Total
-                        </div>
-                      </th>
+          ${sales.map(sale => `
+            <div style="margin-bottom: 30px; border: 1px solid #ddd; padding: 15px;">
+              <h3>Venta - ${formatDateForExport(sale.created_at)}</h3>
+              <p><strong>Cliente:</strong> ${sale.clients?.full_name || 'Cliente Anónimo'}</p>
+              
+              <table>
+                <thead>
+                  <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unit.</th>
+                    <th>Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${sale.sale_items.map(item => `
+                    <tr>
+                      <td>${item.products.name}</td>
+                      <td>${item.quantity}</td>
+                      <td>S/ ${Number(item.unit_price).toFixed(2)}</td>
+                      <td>S/ ${(item.unit_price * item.quantity).toFixed(2)}</td>
                     </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {sales.map((sale) => (
-                      <React.Fragment key={sale.id}>
-                        <tr 
-                          className="hover:bg-orange-50 cursor-pointer transition-colors duration-150 group"
-                          onClick={() => toggleSaleDetails(sale.id)}
-                        >
-                          <td className="px-6 py-4">
-                            <div className={`text-gray-400 group-hover:text-orange-500 transition-all duration-200 ${expandedSale === sale.id ? 'rotate-180 text-orange-500' : ''}`}>
-                              <ChevronDownIcon />
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">
-                              {formatDate(sale.created_at)}
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <div className="flex items-center">
-                              <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center mr-3">
-                                <span className="text-white text-xs font-bold">
-                                  {(sale.clients?.full_name || 'A')[0].toUpperCase()}
-                                </span>
-                              </div>
-                              <div>
-                                <div className="text-sm font-medium text-gray-900">
-                                  {sale.clients?.full_name || 'Cliente Anónimo'}
-                                </div>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-center">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                              {sale.sale_items.length} item{sale.sale_items.length !== 1 ? 's' : ''}
-                            </span>
-                          </td>
-                          <td className="px-6 py-4 whitespace-nowrap text-right">
-                            <div className="text-sm font-bold text-gray-900">
-                              {formatCurrency(sale.total_amount)}
-                            </div>
-                          </td>
-                        </tr>
-                        
-                        {/* Fila expandible con detalle */}
-                        {expandedSale === sale.id && (
-                          <tr className="bg-gradient-to-r from-orange-50 to-amber-50">
-                            <td colSpan="5" className="px-0 py-0">
-                              <div className="px-6 py-4 animate-in fade-in-50 duration-300">
-                                <div className="bg-white rounded-lg border border-orange-200 shadow-sm overflow-hidden">
-                                  <div className="px-4 py-3 bg-orange-100 border-b border-orange-200">
-                                    <h4 className="font-semibold text-gray-900 flex items-center">
-                                      <ShoppingBagIcon className="mr-2 text-orange-600" />
-                                      Detalle de Productos
-                                    </h4>
-                                  </div>
-                                  <div className="overflow-x-auto">
-                                    <table className="min-w-full">
-                                      <thead>
-                                        <tr className="bg-gray-50">
-                                          <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Producto
-                                          </th>
-                                          <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Cantidad
-                                          </th>
-                                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Precio Unit.
-                                          </th>
-                                          <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Subtotal
-                                          </th>
-                                        </tr>
-                                      </thead>
-                                      <tbody className="divide-y divide-gray-200">
-                                        {sale.sale_items.map((item, index) => (
-                                          <tr key={index} className="hover:bg-gray-50">
-                                            <td className="px-4 py-3">
-                                              <div className="text-sm font-medium text-gray-900">
-                                                {item.products.name}
-                                              </div>
-                                            </td>
-                                            <td className="px-4 py-3 text-center">
-                                              <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                                                {item.quantity}
-                                              </span>
-                                            </td>
-                                            <td className="px-4 py-3 text-right text-sm text-gray-900">
-                                              {formatCurrency(item.unit_price)}
-                                            </td>
-                                            <td className="px-4 py-3 text-right">
-                                              <div className="text-sm font-semibold text-gray-900">
-                                                {formatCurrency(item.unit_price * item.quantity)}
-                                              </div>
-                                            </td>
-                                          </tr>
-                                        ))}
-                                      </tbody>
-                                    </table>
-                                  </div>
-                                  <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
-                                    <div className="flex justify-between items-center">
-                                      <span className="text-sm font-medium text-gray-600">
-                                        Total de la venta:
-                                      </span>
-                                      <span className="text-lg font-bold text-gray-900">
-                                        {formatCurrency(sale.total_amount)}
-                                      </span>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-                            </td>
-                          </tr>
-                        )}
-                      </React.Fragment>
-                    ))}
-                  </tbody>
-                </table>
+                  `).join('')}
+                </tbody>
+              </table>
+              
+              <p class="total"><strong>Total: ${formatCurrency(sale.total_amount)}</strong></p>
+            </div>
+          `).join('')}
+        </body>
+        </html>
+      `;
+
+      const printWindow = window.open('', '_blank');
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    } catch (error) {
+      console.error('Error al generar PDF:', error);
+      alert('Error al generar el archivo PDF');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  // Función para descargar resumen de estadísticas
+  const downloadSummary = () => {
+    setDownloading(true);
+    try {
+      const summaryData = [
+        ['RESUMEN DE VENTAS'],
+        ['Generado el:', new Date().toLocaleDateString('es-PE')],
+        [''],
+        ['ESTADÍSTICAS GENERALES'],
+        ['Total de Ventas:', stats.totalSales],
+        ['Ingresos Totales:', `S/ ${Number(stats.totalRevenue).toFixed(2)}`],
+        ['Productos Vendidos:', stats.totalProducts],
+        ['Ticket Promedio:', `S/ ${Number(stats.averageTicket).toFixed(2)}`],
+        [''],
+        ['DETALLE POR FECHA'],
+        ['Fecha', 'Cliente', 'Productos', 'Total']
+      ];
+
+      sales.forEach(sale => {
+        summaryData.push([
+          formatDateForExport(sale.created_at),
+          sale.clients?.full_name || 'Cliente Anónimo',
+          sale.sale_items.length,
+          `S/ ${Number(sale.total_amount).toFixed(2)}`
+        ]);
+      });
+
+      const csvContent = summaryData.map(row => 
+        row.map(field => `"${field}"`).join(',')
+      ).join('\n');
+
+      const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `resumen_ventas_${new Date().toISOString().split('T')[0]}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error('Error al generar resumen:', error);
+      alert('Error al generar el archivo de resumen');
+    } finally {
+      setDownloading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50 animate-in fade-in-50 duration-500">
+      {/* Header */}
+      <div className="bg-white border-b border-gray-200 mb-8">
+        <div className="px-6 py-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className="p-2 bg-orange-100 rounded-lg mr-3">
+                <ReportIcon className="text-orange-600" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-bold text-gray-900">Reportes de Ventas</h1>
+                <p className="text-gray-600">Análisis detallado de transacciones y rendimiento de ventas</p>
+              </div>
+            </div>
+            
+            {/* Botones de Descarga */}
+            {!loading && !error && sales.length > 0 && (
+              <div className="flex space-x-3">
+                <button
+                  onClick={downloadSummary}
+                  disabled={downloading}
+                  className="flex items-center px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <FileTextIcon className="mr-2" />
+                  Resumen
+                </button>
+                
+                <button
+                  onClick={downloadExcel}
+                  disabled={downloading}
+                  className="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-lg"
+                  title="Descarga Excel con formato profesional"
+                >
+                  <TableIcon className="mr-2" />
+                  Excel Animado
+                </button>
+
+                <button
+                  onClick={downloadCSV}
+                  disabled={downloading}
+                  className="flex items-center px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <TableIcon className="mr-2" />
+                  CSV Simple
+                </button>
+                
+                <button
+                  onClick={downloadPDF}
+                  disabled={downloading}
+                  className="flex items-center px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <DownloadIcon className="mr-2" />
+                  PDF
+                </button>
               </div>
             )}
           </div>
         </div>
       </div>
-    );
-  }
+
+      <div className="px-6 pb-8">
+        {/* Tarjetas de Estadísticas */}
+        {!loading && !error && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Total Ventas</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.totalSales}</p>
+                </div>
+                <div className="p-3 bg-blue-100 rounded-lg">
+                  <ShoppingBagIcon className="text-blue-600" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-green-600">
+                <span className="font-medium">Transacciones registradas</span>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Ingresos Totales</p>
+                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(stats.totalRevenue)}</p>
+                </div>
+                <div className="p-3 bg-green-100 rounded-lg">
+                  <CurrencyIcon className="text-green-600" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-green-600">
+                <span className="font-medium">Facturación acumulada</span>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Productos Vendidos</p>
+                  <p className="text-3xl font-bold text-gray-900">{stats.totalProducts}</p>
+                </div>
+                <div className="p-3 bg-purple-100 rounded-lg">
+                  <ShoppingBagIcon className="text-purple-600" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-green-600">
+                <span className="font-medium">Unidades totales</span>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-600">Ticket Promedio</p>
+                  <p className="text-3xl font-bold text-gray-900">{formatCurrency(stats.averageTicket)}</p>
+                </div>
+                <div className="p-3 bg-orange-100 rounded-lg">
+                  <CurrencyIcon className="text-orange-600" />
+                </div>
+              </div>
+              <div className="mt-4 flex items-center text-sm text-green-600">
+                <span className="font-medium">Por transacción</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tabla de Transacciones */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-xl font-semibold text-gray-900 flex items-center">
+              <CalendarIcon className="mr-2 text-gray-500" />
+              Historial de Transacciones
+            </h2>
+            <p className="text-sm text-gray-600 mt-1">Detalle completo de todas las ventas realizadas</p>
+          </div>
+
+          {loading ? (
+            <LoadingSpinner />
+          ) : error ? (
+            <div className="p-8 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mb-4">
+                <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Error al cargar los datos</h3>
+              <p className="text-gray-600 mb-4">{error}</p>
+              <button 
+                onClick={() => window.location.reload()} 
+                className="px-4 py-2 bg-orange-500 text-white rounded-lg hover:bg-orange-600 transition-colors"
+              >
+                Intentar nuevamente
+              </button>
+            </div>
+          ) : sales.length === 0 ? (
+            <div className="p-8 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                <ShoppingBagIcon className="text-gray-400 w-8 h-8" />
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mb-2">No hay ventas registradas</h3>
+              <p className="text-gray-600">Las transacciones aparecerán aquí una vez que se realicen ventas.</p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full">
+                <thead>
+                  <tr className="bg-gray-50 border-b border-gray-200">
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-12">
+                      <span className="sr-only">Expandir</span>
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <div className="flex items-center">
+                        <CalendarIcon className="mr-2" />
+                        Fecha y Hora
+                      </div>
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <div className="flex items-center">
+                        <UserIcon className="mr-2" />
+                        Cliente
+                      </div>
+                    </th>
+                    <th className="px-6 py-4 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <div className="flex items-center justify-center">
+                        <ShoppingBagIcon className="mr-2" />
+                        Productos
+                      </div>
+                    </th>
+                    <th className="px-6 py-4 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <div className="flex items-center justify-end">
+                        <CurrencyIcon className="mr-2" />
+                        Total
+                      </div>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {sales.map((sale) => (
+                    <React.Fragment key={sale.id}>
+                      <tr 
+                        className="hover:bg-orange-50 cursor-pointer transition-colors duration-150 group"
+                        onClick={() => toggleSaleDetails(sale.id)}
+                      >
+                        <td className="px-6 py-4">
+                          <div className={`text-gray-400 group-hover:text-orange-500 transition-all duration-200 ${expandedSale === sale.id ? 'rotate-180 text-orange-500' : ''}`}>
+                            <ChevronDownIcon />
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">
+                            {formatDate(sale.created_at)}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="w-8 h-8 bg-gradient-to-br from-orange-400 to-orange-500 rounded-full flex items-center justify-center mr-3">
+                              <span className="text-white text-xs font-bold">
+                                {(sale.clients?.full_name || 'A')[0].toUpperCase()}
+                              </span>
+                            </div>
+                            <div>
+                              <div className="text-sm font-medium text-gray-900">
+                                {sale.clients?.full_name || 'Cliente Anónimo'}
+                              </div>
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-center">
+                          <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            {sale.sale_items.length} item{sale.sale_items.length !== 1 ? 's' : ''}
+                          </span>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right">
+                          <div className="text-sm font-bold text-gray-900">
+                            {formatCurrency(sale.total_amount)}
+                          </div>
+                        </td>
+                      </tr>
+                      
+                      {/* Fila expandible con detalle */}
+                      {expandedSale === sale.id && (
+                        <tr className="bg-gradient-to-r from-orange-50 to-amber-50">
+                          <td colSpan="5" className="px-0 py-0">
+                            <div className="px-6 py-4 animate-in fade-in-50 duration-300">
+                              <div className="bg-white rounded-lg border border-orange-200 shadow-sm overflow-hidden">
+                                <div className="px-4 py-3 bg-orange-100 border-b border-orange-200">
+                                  <h4 className="font-semibold text-gray-900 flex items-center">
+                                    <ShoppingBagIcon className="mr-2 text-orange-600" />
+                                    Detalle de Productos
+                                  </h4>
+                                </div>
+                                <div className="overflow-x-auto">
+                                  <table className="min-w-full">
+                                    <thead>
+                                      <tr className="bg-gray-50">
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                          Producto
+                                        </th>
+                                        <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                          Cantidad
+                                        </th>
+                                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                          Precio Unit.
+                                        </th>
+                                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                          Subtotal
+                                        </th>
+                                      </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-200">
+                                      {sale.sale_items.map((item, index) => (
+                                        <tr key={index} className="hover:bg-gray-50">
+                                          <td className="px-4 py-3">
+                                            <div className="text-sm font-medium text-gray-900">
+                                              {item.products.name}
+                                            </div>
+                                          </td>
+                                          <td className="px-4 py-3 text-center">
+                                            <span className="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                                              {item.quantity}
+                                            </span>
+                                          </td>
+                                          <td className="px-4 py-3 text-right text-sm text-gray-900">
+                                            {formatCurrency(item.unit_price)}
+                                          </td>
+                                          <td className="px-4 py-3 text-right">
+                                            <div className="text-sm font-semibold text-gray-900">
+                                              {formatCurrency(item.unit_price * item.quantity)}
+                                            </div>
+                                          </td>
+                                        </tr>
+                                      ))}
+                                    </tbody>
+                                  </table>
+                                </div>
+                                <div className="px-4 py-3 bg-gray-50 border-t border-gray-200">
+                                  <div className="flex justify-between items-center">
+                                    <span className="text-sm font-medium text-gray-600">
+                                      Total de la venta:
+                                    </span>
+                                    <span className="text-lg font-bold text-gray-900">
+                                      {formatCurrency(sale.total_amount)}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

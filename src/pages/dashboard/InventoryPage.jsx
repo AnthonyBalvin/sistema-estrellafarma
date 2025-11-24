@@ -26,9 +26,9 @@ const ProductModal = ({ isOpen, onClose, onSave, productToEdit }) => {
   const [description, setDescription] = useState('');
   const [price, setPrice] = useState(0);
   const [stockQuantity, setStockQuantity] = useState(0);
-  const [supplierId, setSupplierId] = useState(''); // NUEVO: ID del Proveedor
-  const [expirationDate, setExpirationDate] = useState(''); // NUEVO: Fecha de Vencimiento
-  const [suppliers, setSuppliers] = useState([]); // NUEVO: Lista de proveedores para el select
+  const [supplierId, setSupplierId] = useState(''); 
+  const [expirationDate, setExpirationDate] = useState(''); 
+  const [suppliers, setSuppliers] = useState([]); 
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);

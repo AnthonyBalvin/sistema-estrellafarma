@@ -16,7 +16,8 @@ import SuppliersPage from './pages/dashboard/SuppliersPage';
 import BranchesPage from './pages/dashboard/BranchesPage';
 import CreditAccountsPage from './pages/dashboard/CreditAccountsPage';
 import CashClosurePage from './pages/dashboard/CashClosurePage';
-import VouchersPage from './pages/dashboard/VouchersPage'; // 🆕 NUEVA IMPORTACIÓN
+import VouchersPage from './pages/dashboard/VouchersPage';
+
 
 function App() {
   const [user, setUser] = useState(null);
@@ -73,7 +74,7 @@ function App() {
   const renderDashboardContent = () => {
     let componentToRender;
     switch (currentView) {
-      case 'dashboard': componentToRender = <DashboardPage />; break;
+      case 'dashboard': componentToRender = <DashboardPage user={user} />; break;
       case 'inventory': componentToRender = <InventoryPage />; break;
       case 'sales': componentToRender = <SalesPage />; break;
       case 'vouchers': componentToRender = <VouchersPage />; break; // 🆕 NUEVO CASE

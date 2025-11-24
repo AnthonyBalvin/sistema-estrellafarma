@@ -1,5 +1,6 @@
 // src/pages/dashboard/BranchesPage.jsx
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
+
 import { supabase } from '../../supabase/client';
 
 // --- Iconos ---
@@ -189,6 +190,7 @@ const ConfirmationModal = ({ isOpen, onClose, onConfirm, message, loading }) => 
 // --- Componente Principal ---
 export default function BranchesPage() {
     const [branches, setBranches] = useState([]);
+
     const [profiles, setProfiles] = useState([]);
     const [sales, setSales] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -198,6 +200,14 @@ export default function BranchesPage() {
     const [currentBranch, setCurrentBranch] = useState(null);
     const [toast, setToast] = useState({ show: false, message: '', type: '' });
     const [isDeleting, setIsDeleting] = useState(false);
+    const [appTheme, setAppTheme] = useState(() => localStorage.getItem('appTheme') || 'light');
+    const isDark = appTheme === 'dark';
+
+    useEffect(() => {
+        const handler = () => setAppTheme(localStorage.getItem('appTheme') || 'light');
+        window.addEventListener('appThemeChanged', handler);
+        return () => window.removeEventListener('appThemeChanged', handler);
+    }, []);
 
     const showToast = (message, type = 'success') => {
         setToast({ show: true, message, type });
@@ -332,18 +342,18 @@ export default function BranchesPage() {
                 loading={isDeleting}
             />
 
-            <div className="min-h-screen bg-gray-50">
+            <div className={`min-h-screen ${isDark ? 'bg-slate-900' : 'bg-gray-50'}`}>
                 {/* Header */}
-                <div className="bg-white border-b border-gray-200 mb-8">
+                <div className={`${isDark ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'} border-b mb-8`}>
                     <div className="px-6 py-6">
                         <div className="flex items-center justify-between">
                             <div className="flex items-center">
-                                <div className="p-2 bg-orange-100 rounded-lg mr-3">
+                                <div className={`p-2 rounded-lg mr-3 ${isDark ? 'bg-slate-700' : 'bg-orange-100'}`}>
                                     <BuildingIcon />
                                 </div>
                                 <div>
-                                    <h1 className="text-3xl font-bold text-gray-900">Gestión de Sucursales</h1>
-                                    <p className="text-gray-600">Control y administración de todas las ubicaciones</p>
+                                    <h1 className={`text-3xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Gestión de Sucursales</h1>
+                                    <p className={`${isDark ? 'text-slate-300' : 'text-gray-600'}`}>Control y administración de todas las ubicaciones</p>
                                 </div>
                             </div>
                             
@@ -360,6 +370,7 @@ export default function BranchesPage() {
                 
                 {/* Contenido de Sucursales */}
                 <div className="px-6 pb-8">
+
                     {loading ? ( 
                         <p className="text-gray-600 text-lg text-center p-10">Cargando sucursales...</p> 
                     ) : error ? ( 
@@ -367,7 +378,7 @@ export default function BranchesPage() {
                     ) : (
                         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                             {processedBranches.map((branch) => (
-                                <div key={branch.id} className="bg-gradient-to-br from-white to-gray-50 rounded-xl border border-gray-200 p-6 flex flex-col hover:shadow-lg transition-all duration-300">
+                                <div key={branch.id} className={`${isDark ? 'bg-slate-800 border-slate-700' : 'bg-gradient-to-br from-white to-gray-50 border-gray-200'} rounded-xl border p-6 flex flex-col hover:shadow-lg transition-all duration-300`}>
                                     
                                     <div className="flex items-start justify-between mb-4">
                                         <div className="flex items-center">
@@ -383,11 +394,11 @@ export default function BranchesPage() {
                                                 )}
                                             </div>
                                             <div>
-                                                <h3 className="font-semibold text-gray-900 text-lg">
+                                                <h3 className={`font-semibold text-lg ${isDark ? 'text-white' : 'text-gray-900'}`}>
                                                     {branch.name}
                                                 </h3>
                                                 {isMainBranch(branch.name) && (
-                                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 mt-1">
+                                                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium mt-1 ${isDark ? 'bg-slate-700 text-orange-300' : 'bg-orange-100 text-orange-800'}`}>
                                                         Principal
                                                     </span>
                                                 )}
@@ -396,13 +407,13 @@ export default function BranchesPage() {
                                         <div className="flex space-x-2">
                                             <button 
                                                 onClick={() => handleEdit(branch)} 
-                                                className="p-2 text-gray-400 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                                                className={`p-2 rounded-lg transition-colors ${isDark ? 'text-slate-300 hover:text-orange-400 hover:bg-slate-700' : 'text-gray-400 hover:text-orange-600 hover:bg-orange-50'}`}
                                             >
                                                 <EditIcon />
                                             </button>
                                             <button 
                                                 onClick={() => handleDelete(branch)} 
-                                                className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                className={`p-2 rounded-lg transition-colors ${isDark ? 'text-slate-300 hover:text-red-400 hover:bg-slate-700' : 'text-gray-400 hover:text-red-600 hover:bg-red-50'}`}
                                             >
                                                 <DeleteIcon />
                                             </button>
@@ -410,37 +421,37 @@ export default function BranchesPage() {
                                     </div>
                                     
                                     <div className="space-y-3 mb-6">
-                                        <div className="flex items-center text-sm text-gray-600">
+                                        <div className={`flex items-center text-sm ${isDark ? 'text-slate-300' : 'text-gray-600'}`}>
                                             <MapPinIcon />
                                             <span className="ml-2">{branch.address || 'Sin dirección'}</span>
                                         </div>
-                                        <div className="flex items-center text-sm text-gray-600">
+                                        <div className={`flex items-center text-sm ${isDark ? 'text-slate-300' : 'text-gray-600'}`}>
                                             <PhoneIcon />
                                             <span className="ml-2">{branch.phone?.[0] || 'Sin teléfono'}</span>
                                         </div>
-                                        <div className="flex items-center text-sm text-gray-600">
+                                        <div className={`flex items-center text-sm ${isDark ? 'text-slate-300' : 'text-gray-600'}`}>
                                             <ClockIcon />
                                             <span className="ml-2">{branch.opening_hours || 'Sin horario'}</span>
                                         </div>
                                     </div>
                                     
                                     {/* Sección de Empleados y Ventas */}
-                                    <div className="border-t border-gray-200 pt-4 mt-auto">
-                                        <h4 className="text-sm font-semibold text-gray-800 mb-3 flex items-center">
-                                            <UsersIcon className="mr-2 text-gray-400" /> Personal y Ventas ({branch.employees.length})
+                                    <div className={`border-t pt-4 mt-auto ${isDark ? 'border-slate-700' : 'border-gray-200'}`}>
+                                        <h4 className={`text-sm font-semibold mb-3 flex items-center ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                                            <UsersIcon className={`mr-2 ${isDark ? 'text-slate-300' : 'text-gray-400'}`} /> Personal y Ventas ({branch.employees.length})
                                         </h4>
                                         <div className="space-y-3 max-h-40 overflow-y-auto pr-2">
                                             {branch.employees.length > 0 ? (
                                                 branch.employees.sort((a, b) => b.total_sales - a.total_sales).map(employee => (
                                                     <div key={employee.id} className="flex justify-between items-center text-sm">
-                                                        <span className="text-gray-700 truncate">{employee.full_name}</span>
-                                                        <span className="font-semibold text-blue-600 bg-blue-50 px-2 py-1 rounded-full whitespace-nowrap">
+                                                        <span className={`${isDark ? 'text-slate-200' : 'text-gray-700'} truncate`}>{employee.full_name}</span>
+                                                        <span className={`font-semibold px-2 py-1 rounded-full whitespace-nowrap ${isDark ? 'text-blue-400 bg-slate-700' : 'text-blue-600 bg-blue-50'}`}>
                                                             {formatCurrency(employee.total_sales)}
                                                         </span>
                                                     </div>
                                                 ))
                                             ) : (
-                                                <p className="text-sm text-gray-500 text-center py-2">No hay personal o ventas asignadas.</p>
+                                                <p className={`text-sm text-center py-2 ${isDark ? 'text-slate-300' : 'text-gray-500'}`}>No hay personal o ventas asignadas.</p>
                                             )}
                                         </div>
                                     </div>
